@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>admin</h1>
+    <form id="form">
+      <input id="b_img" type="text" placeholder="img url" />
+      <input id="name" type="text" placeholder="book name" />
+      <input id="author" type="text" placeholder="author name" />
+
+      <select id="jonour">
+        <option value="">Select Category</option>
+        <option value="Science">Science</option>
+        <option value="Fiction">Fiction</option>
+        <option value="History">History</option>
+        <option value="Tech">Tech</option>
+        <option value="Business">Business</option>
+      </select>
+      <select id="edition">
+        <option value="">Select Category</option>
+        <option value="2020">2020</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+      </select>
+      <input id="publisher" placeholder="Type Publisher" type="text" />
+      <input id="price" placeholder="type books price" type="number" />
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Book Image</th>
+          <th>Book name</th>
+          <th>Author</th>
+          <th>Genre</th>
+          <th>Edition</th>
+
+          <th>Publisher</th>
+          <th>Price</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="body">
+        <!-- Append your data here  -->
+      </tbody>
+    </table>
+  </body>
+</html>
+<script>
+  let adminForm = document.querySelector("form");
+  adminForm.addEventListener("submit", admin);
+
+  function getData() {
+    document.getElementById("body").textContent = "";
+    fetch("http://localhost:3000/booksData")
+      .then((val) => val.json())
+      .then((data) => {
+        data.forEach((elem, i) => {
+          let tr = document.createElement("tr");
+
+          let b_img = document.createElement("td");
+          b_img.innerText = elem.b_img;
+
+          let name = document.createElement("td");
+          name.innerText = elem.name;
+
+          let author = document.createElement("td");
+          author.innerText = elem.author;
+
+          let jonour = document.createElement("td");
+          jonour.innerText = elem.jonour;
+
+          let edition = document.createElement("td");
+          edition.innerText = elem.edition;
+
+          let publisher = document.createElement("td");
+          publisher.innerText = elem.publisher;
+
+          let price = document.createElement("td");
+          price.innerText = elem.price;
+
+          let taken = document.createElement("td");
+          taken.innerText = elem.taken;
+
+          let Edit = document.createElement("button");
+          Edit.innerText = "Edit";
+          Edit.addEventListener("click", function () {});
+
+          let Delete = document.createElement("button");
+          Delete.innerText = "Delete";
+          Delete.addEventListener("click", function () {
+            // console.log(elem.id,"elem.id")
+            fetch(`http://localhost:3000/booksData/${elem.id}`, {
+              method: "DELETE",
+            });
+          });
+
+          tr.append(
+            b_img,
+            name,
+            author,
+            jonour,
+            edition,
+            publisher,
+            price,
+            taken,
+            Edit,
+            Delete
+          );
+
+          document.getElementById("body").append(tr);
+        });
+      });
+  }
+
+  function admin(e) {
+    e.preventDefault();
+    let obj = {
+      b_img: adminForm.b_img.value,
+      name: adminForm.name.value,
+      author: adminForm.author.value,
+      jonour: adminForm.jonour.value,
+      edition: adminForm.edition.value,
+      publisher: adminForm.publisher.value,
+      price: adminForm.price.value,
+      taken: "false",
+    };
+
+    fetch("http://localhost:3000/booksData", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    });
+  }
+  getData();
+</script>
